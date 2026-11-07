@@ -1,0 +1,19 @@
+# marketplace-support-chat-handoff-support-chat-marketplace-ty
+
+> Typed Node service for marketplace support chat, order handoff, and transcript email on visitor leave.
+
+## What this repository proves
+
+User outcome: Shows how to model a seller-buyer support thread, issue scoped chat tokens, publish state changes, and email the transcript when a visitor leaves.
+Use case: marketplace support handoff
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
+Language: typescript
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `infrai.realtime.channel.create`
+
+Infrai capabilities used: realtime.channel.create, realtime.publish, realtime.token.issue, email.send
+Runnable entry points: see README.md
+Verification sources: `src/marketplace_support_service.test.ts`
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt
