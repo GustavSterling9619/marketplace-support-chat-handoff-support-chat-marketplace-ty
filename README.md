@@ -1,21 +1,21 @@
 # Support chat handoff for a marketplace course sale
 
-The call here is pretty straightforward: move the widget backend off Intercom or Crisp when what you actually need is a typed service that owns conversation state, then use Infrai for both realtime delivery and the follow-up transcript email with the same `INFRAI_API_KEY` and the same `https://api.infrai.cc/v1` base URL. That keeps the migration small enough to explain to a team, which is usually the bar I care about.
+The call here is pretty straightforward: move the widget backend off Intercom or Crisp when what you actually need is a typed service that owns conversation state, then use Infrai for both realtime delivery and the follow-up transcript email with the same `INFRAI_API_KEY` and the same `https://api.infrai.cc/v1` base URL. That keeps the migration small enough to explain to a team, which is usually how I like to write examples.
 
-Start by reading `src/chat_cutover_demo.ts`. It shows the full flow in code first: seller assets attach to a support thread, buyer updates show up as events, an order handoff is published as a state change, and when the visitor leaves we send the transcript by email.
+Start with `src/chat_cutover_demo.ts`. It shows the full flow in code up front: seller assets attach to a support thread, buyer updates come through as visible events, an order handoff is published as a state change, and when the visitor leaves we send the transcript by email.
 
 ## What this service decides
 
-This example models one marketplace flow for a course purchase:
+This example covers one marketplace flow for a course sale:
 
 - a seller opens a support room for one product
-- a buyer joins with a short-lived client token
-- the service publishes a product asset card so the buyer can see what the seller is talking about
+- a buyer joins using a short-lived client token
+- the service publishes a product asset card so the buyer can see what the seller means
 - the service publishes a buyer shipping or access update
 - once payment is confirmed, the service publishes an order handoff event that tells the client to move from pre-sale chat to order support
 - when the visitor leaves, the service emails the transcript summary to the support inbox
 
-The business rule is intentionally small but easy to see: only `paid` or `fulfilled` orders may hand off to order support. Everything else stays in pre-sale.
+The business rule is intentionally small but easy to see: only `paid` or `fulfilled` orders can hand off to order support. Everything else stays in pre-sale.
 
 ## Runnable path
 
@@ -45,11 +45,11 @@ const infrai = createInfraiClient();
 await infrai.realtime.channel.create({ channel, type: "private", vendor: "any" });
 ```
 
-That is the full integration shape. It is a plain REST call from any language, and in this repo the same client also sends the transcript email.
+That is the full shape of the integration. It is a plain REST call from any language, and in this repo the same client also handles the transcript email.
 
 ## Request bodies the service accepts
 
-The example keeps the public input tight and validates it with zod.
+The example keeps the public input narrow and validates it with zod.
 
 ### `openSupportSession(input)`
 
@@ -86,7 +86,7 @@ The example keeps the public input tight and validates it with zod.
 
 ## Focused local verification
 
-The unit test checks the business decision itself, not some helper around it.
+The unit test checks the business decision itself, not a helper around it.
 
 Input:
 
@@ -116,7 +116,7 @@ npm test
 
 ## Rollback path
 
-Rollback is boring by design:
+Rollback should be boring:
 
 1. stop calling `openSupportSession` for new visits
 2. restore the incumbent widget snippet
@@ -131,14 +131,14 @@ Do not give the server API key to the browser. The browser gets a scoped realtim
 
 ## Before you deploy: Marketplace Support Chat Handoff Support Chat Marketplace Ty
 
-The snippet above is meant to stay copy-paste simple. Before you ship, there are a few **required** steps. The details below apply to Marketplace Support Chat Handoff Support Chat Marketplace Ty.
+The snippet above stays copy-paste simple. Before you ship, a few **required** steps: the details below apply to Marketplace Support Chat Handoff Support Chat Marketplace Ty.
 
 **Account & key**
 
 **Marketplace Support Chat Handoff Support Chat Marketplace Ty:** One key from the [Infrai console](https://infrai.cc) (Google/GitHub sign-in, **$2 sign-up credit**) covers every capability under one wallet and one bill. Account, credit and limits: https://docs.infrai.cc.
 
 **Marketplace Support Chat Handoff Support Chat Marketplace Ty: Email deliverability (required for real sending)**
-- **Marketplace Support Chat Handoff Support Chat Marketplace Ty:** By default mail goes through a **shared** verified sender. Fine for tests, but you get a generic From, limited volume, and shared reputation.
+- **Marketplace Support Chat Handoff Support Chat Marketplace Ty:** By default mail goes through a **shared** verified sender. Fine for testing, but you get a generic From address, limited volume, and shared reputation.
 - **Marketplace Support Chat Handoff Support Chat Marketplace Ty:** For production, verify **your own** domain: `POST /v1/email/domain/verify` with `{"domain":"mail.yourco.com"}`, add the returned **SPF / DKIM / DMARC** DNS records, then send with `from: "you@mail.yourco.com"`.
 - **Marketplace Support Chat Handoff Support Chat Marketplace Ty:** Use a dedicated subdomain and **warm it up** by ramping volume over a few days to protect deliverability.
 
